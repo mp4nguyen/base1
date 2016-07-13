@@ -1,0 +1,20 @@
+{
+  "name": "CClinicBookingTypes",
+  "base": "ClinicBookingTypes",
+  "properties": {},
+  "validations": [],
+  "relations": {
+    "BookingTypes": {
+      "type": "belongsTo",
+      "model": "CBookingTypes",
+      "foreignKey": "bookingTypeId"
+    },
+    "Clinics": {
+      "type": "belongsTo",
+      "model": "CClinics",
+      "foreignKey": "clinicId"
+    }    
+  },
+  "acls": [],
+  "methods": {}
+}

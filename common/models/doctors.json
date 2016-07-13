@@ -1,0 +1,39 @@
+{
+  "name": "CDoctors",
+  "base": "Doctors",
+  "properties": {},
+  "validations": [],
+  "relations": {
+    "Person": {
+      "type": "belongsTo",
+      "model": "CPeople",
+      "foreignKey": "personId"
+    },
+    "People": {
+      "type": "hasMany",
+      "model": "CPeople",
+      "foreignKey": "personId"
+    },    
+    "Clinics": {
+      "type": "hasMany",
+      "model": "CClinics",
+      "foreignKey": "doctorId",
+      "through": "CDoctorClinics",
+	  "keyThrough": "clinicId"
+    },        
+    "BookingTypes": {
+      "type": "hasMany",
+      "model": "CBookingTypes",
+      "foreignKey": "doctorId",
+      "through": "CDoctorBookingTypes",
+	  "keyThrough": "bookingTypeId"
+    },
+    "Rosters": {
+      "type": "hasMany",
+      "model": "CRosters",
+      "foreignKey": "doctorId"
+    }                
+  },
+  "acls": [],
+  "methods": {}
+}

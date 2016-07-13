@@ -1,0 +1,100 @@
+{
+  "_meta": {
+    "sources": [
+      "loopback/common/models",
+      "loopback/server/models",
+      "../../models/common/models",
+      "../common/models",
+      "./models"
+    ],
+    "mixins": [
+      "loopback/common/mixins",
+      "loopback/server/mixins",
+      "../common/mixins",
+      "./mixins"
+    ]
+  },
+  "User": {
+    "dataSource": "db"
+  },
+  "AccessToken": {
+    "dataSource": "db",
+    "public": false
+  },
+  "ACL": {
+    "dataSource": "db",
+    "public": false
+  },
+  "RoleMapping": {
+    "dataSource": "db",
+    "public": false
+  },
+  "Role": {
+    "dataSource": "db",
+    "public": false
+  },
+  "CBookingTypes": {
+    "dataSource": "obs",
+    "public": true
+  },
+  "CClinicBookingTypes": {
+    "dataSource": "obs",
+    "public": true
+  },
+  "CDoctorBookingTypes": {
+    "dataSource": "obs",
+    "public": true
+  },
+  "CDoctorClinics": {
+    "dataSource": "obs",
+    "public": true
+  },
+  "CDoctors": {
+    "dataSource": "obs",
+    "public": true
+  },
+  "CGallery": {
+    "dataSource": "obs",
+    "public": true
+  },
+  "CPeople": {
+    "dataSource": "obs",
+    "public": true
+  },
+  "CRosters": {
+    "dataSource": "obs",
+    "public": true
+  },
+  "CRosterDays": {
+    "dataSource": "obs",
+    "public": true
+  },
+  "CRosterPlaces": {
+    "dataSource": "obs",
+    "public": true
+  },
+  "CReviews": {
+    "dataSource": "obs",
+    "public": true
+  },
+  "CRosterTimes": {
+    "dataSource": "obs",
+    "public": true
+  },
+  "CClinics": {
+    "dataSource": "obs",
+    "public": true
+  },
+  "CCompanies": {
+    "dataSource": "obs",
+    "public": true
+  },
+  "CCalendars": {
+    "dataSource": "obs",
+    "public": true
+  },
+  "CUsers": {
+    "dataSource": "obs",
+    "public": true
+  }
+}

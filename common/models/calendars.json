@@ -1,0 +1,10 @@
+{
+  "name": "CCalendars",
+  "base": "Calendars",
+  "properties": {},
+  "validations": [],
+  "relations": {
+  },
+  "acls": [],
+  "methods": []
+}

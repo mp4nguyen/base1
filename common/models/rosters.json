@@ -1,0 +1,25 @@
+{
+  "name": "CRosters",
+  "base": "Rosters",
+  "properties": {},
+  "validations": [],
+  "relations": {
+    "BookingType": {
+      "type": "belongsTo",
+      "model": "CBookingTypes",
+      "foreignKey": "bookingTypeId"
+    },        
+    "Clinic": {
+      "type": "belongsTo",
+      "model": "CClinics",
+      "foreignKey": "workingSiteId"
+    },
+    "Calendars": {
+      "type": "hasMany",
+      "model": "CCalendars",
+      "foreignKey": "rosterId"
+    }                
+  },
+  "acls": [],
+  "methods": []
+}

@@ -1,0 +1,24 @@
+{
+  "name": "CClinics",
+  "base": "Clinics",
+  "properties": {},
+  "validations": [],
+  "relations": {
+    "BookingTypes": {
+      "type": "hasMany",
+      "model": "CBookingTypes",
+      "foreignKey": "clinicId",
+      "through": "CClinicBookingTypes",
+	  "keyThrough": "bookingTypeId"
+    },
+    "Doctors": {
+      "type": "hasMany",
+      "model": "CDoctors",
+      "foreignKey": "clinicId",
+      "through": "CDoctorClinics",
+	  "keyThrough": "doctorId"
+    }    
+  },
+  "acls": [],
+  "methods": {}
+}

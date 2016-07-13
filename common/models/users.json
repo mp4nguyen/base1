@@ -1,0 +1,10 @@
+{
+  "name": "CUsers",
+  "base": "Users",
+  "properties": {},
+  "validations": [],
+  "relations": {
+  },
+  "acls": [],
+  "methods": []
+}
