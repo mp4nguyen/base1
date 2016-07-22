@@ -57,7 +57,7 @@
     "dataSource": "obs",
     "public": true
   },
-  "CPeople": {
+  "People": {
     "dataSource": "obs",
     "public": true
   },

@@ -6,21 +6,21 @@
   "relations": {
     "Person": {
       "type": "belongsTo",
-      "model": "CPeople",
+      "model": "People",
       "foreignKey": "personId"
     },
     "People": {
       "type": "hasMany",
-      "model": "CPeople",
+      "model": "People",
       "foreignKey": "personId"
-    },    
+    },
     "Clinics": {
       "type": "hasMany",
       "model": "CClinics",
       "foreignKey": "doctorId",
       "through": "CDoctorClinics",
 	  "keyThrough": "clinicId"
-    },        
+    },
     "BookingTypes": {
       "type": "hasMany",
       "model": "CBookingTypes",
@@ -32,7 +32,7 @@
       "type": "hasMany",
       "model": "CRosters",
       "foreignKey": "doctorId"
-    }                
+    }
   },
   "acls": [],
   "methods": {}

@@ -16,7 +16,12 @@ module.exports = function(CCompanies) {
                                                             {relation:'Doctors',scope:{include:'Person'}}
                                                          ]}},
                       {relation:'Doctors',scope:{include:[
-                                                            {relation:'Person'},
+                                                            {relation:'Person',scope:{include:[
+                                                                                                {relation:'Avatar'},
+                                                                                                {relation:'Signature'}
+                                                                                              ]
+                                                                                      }
+                                                            },
                                                             {relation:'Clinics'},
                                                             {relation:'BookingTypes'},
                                                             {relation:'Rosters',scope:{include:['BookingType','Clinic']}}
@@ -36,7 +41,12 @@ module.exports = function(CCompanies) {
                                                             {relation:'Doctors',scope:{include:'Person'}}
                                                          ]}},
                       {relation:'Doctors',scope:{include:[
-                                                            {relation:'Person'},
+                                                            {relation:'Person',scope:{include:[
+                                                                                                {relation:'Avatar'},
+                                                                                                {relation:'Signature'}
+                                                                                              ]
+                                                                                      }
+                                                            },
                                                             {relation:'Clinics'},
                                                             {relation:'BookingTypes'},
                                                             {relation:'Rosters',scope:{include:['BookingType','Clinic']}}

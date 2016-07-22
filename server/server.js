@@ -1,5 +1,7 @@
 var loopback = require('loopback');
 var boot = require('loopback-boot');
+var bodyParser = require('body-parser');
+var multer = require('multer');
 var fs = require('fs'); //**fs: Handle file system**
 var http = require('http');
 var https = require('https');
@@ -10,6 +12,11 @@ var app = module.exports = loopback();
 var HashMap = require('hashmap');
 var userHashMap = new HashMap();//to store all user
 var companyHashMap = new HashMap();//to store all company of user
+
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+//app.use(multer({ dest: './uploads/'})); // for parsing multipart/form-data
+//app.use(multer().any());
 
 app.use(loopback.context());
 app.use(loopback.token());

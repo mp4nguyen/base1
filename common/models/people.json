@@ -1,9 +1,0 @@
-{
-  "name": "CPeople",
-  "base": "People",
-  "properties": {},
-  "validations": [],
-  "relations": {},
-  "acls": [],
-  "methods": {}
-}
