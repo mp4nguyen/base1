@@ -104,5 +104,13 @@
   "Files": {
     "dataSource": "obs",
     "public": true
+  },
+  "RostersV": {
+    "dataSource": "obs",
+    "public": true
+  },
+  "PatientAppointments": {
+    "dataSource": "obs",
+    "public": true
   }
 }

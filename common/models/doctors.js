@@ -22,31 +22,34 @@ module.exports = function(CDoctors) {
       console.log('-----------------------------');
 
       if(fields.personId){
-
+        //update doctor
         if(files.avatar){
           //save doctor with its avatar
           saveFile(CDoctors,'doctorAvatar',files.avatar,fields.avatarId).then(function(data){
             console.log('saveFile successfully ',data);
             fields.avatarId = data.fileId;
-            CDoctors.app.models.People.update({personId:fields.personId},fields,function(err,data){
-                    console.log('Updated pserson',err,data);
-                    if(err){
-                      cb(err,null)
-                    }
-                    cb(null,{msg:'updated successfully'});
-                  });
+            updateDoctor(fields,cb);
           },function(err){
             console.log('fail to save file',err);
           });
         }else {
           //save without avatar
-          CDoctors.app.models.People.update({personId:fields.personId},fields,function(err,data){
-                  console.log('Updated pserson',err,data);
-                  if(err){
-                    cb(err,null)
-                  }
-                  cb(null,{msg:'updated successfully'});
-                });
+          updateDoctor(fields,cb);
+        }
+      }else{
+        //new doctor
+        if(files.avatar){
+          //save doctor with its avatar
+          saveFile(CDoctors,'doctorAvatar',files.avatar,fields.avatarId).then(function(data){
+            console.log('saveFile successfully ',data);
+            fields.avatarId = data.fileId;
+            createDoctor(fields,cb);
+          },function(err){
+            console.log('fail to save file',err);
+          });
+        }else {
+          //save without avatar
+          createDoctor(fields,cb);
         }
       }
     });
@@ -94,4 +97,67 @@ module.exports = function(CDoctors) {
       }
   );
 
+  var updateDoctor = function(fields,cb){
+    CDoctors.app.models.People.update({personId:fields.personId},fields,function(err,data){
+      console.log('Updated pserson',err,data);
+      if(err){
+        cb(err,null)
+      }
+      cb(null,{msg:'updated successfully'});
+    });
+    CDoctors.update({doctorId:fields.doctorId},{isenable:fields.doctorIsenable,timeInterval:fields.doctorTimeInterval},function(err,data){
+      console.log('updated doctor',err,data);
+    });
+  }
+
+  var createDoctor = function(fields,cb){
+    var personObject = {
+          "personId": 0,
+          "isenable": 1,
+          "title": fields.title,
+          "firstName": fields.firstName,
+          "lastName": fields.lastName,
+          "dob": fields.dob,
+          "gender": fields.gender,
+          "phone": fields.phone,
+          "mobile": fields.mobile,
+          "email": fields.email,
+          "occupation": "",
+          "address": fields.address,
+          "suburbDistrict": fields.suburbDistrict,
+          "ward": fields.ward,
+          "postcode": "",
+          "stateProvince": fields.stateProvince,
+          "country": fields.country,
+          "ispatient": 0,
+          "isdoctor": 1,
+          "avatarId": fields.avatarId ||0,
+          "signatureId": 0,
+          "sourceId": 0
+    };
+
+
+    CDoctors.app.models.People.create(personObject,function(err,data){
+      console.log('Created pserson',err,data);
+      if(err){
+
+      }
+      var doctorObject = {
+           "doctorId": 0,
+           "companyId": fields.companyId,
+           "userId": 0,
+           "personId": data.personId,
+           "timeInterval": fields.doctorTimeInterval,
+           "isenable": fields.doctorIsenable
+      };
+      CDoctors.create(doctorObject,function(err,data){
+          console.log('created doctor',err,data);
+          if(err){
+            cb(err,null);
+          }
+          cb(null,{msg:'created successfully'});
+      });
+
+    });
+  }
 };

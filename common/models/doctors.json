@@ -32,6 +32,11 @@
       "type": "hasMany",
       "model": "CRosters",
       "foreignKey": "doctorId"
+    },
+    "RostersV": {
+      "type": "hasMany",
+      "model": "RostersV",
+      "foreignKey": "doctorId"
     }
   },
   "acls": [],

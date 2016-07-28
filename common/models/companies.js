@@ -6,27 +6,28 @@ module.exports = function(CCompanies) {
 
       var currentUser = loopback.getCurrentContext().active.currentUser;
       var companyData = {};
+      var includes = [
+                {relation:'Clinics',scope:{include:[
+                                                      {relation:'BookingTypes'},
+                                                      {relation:'Doctors',scope:{include:'Person'}}
+                                                   ]}},
+                {relation:'Doctors',scope:{include:[
+                                                      {relation:'Person',scope:{include:[
+                                                                                          {relation:'Avatar'},
+                                                                                          {relation:'Signature'}
+                                                                                        ]
+                                                                                }
+                                                      },
+                                                      {relation:'Clinics'},
+                                                      {relation:'BookingTypes'}
+                                                   ]}}
+                ];
+//{relation:'RostersV'}            
       console.log('CCompanies.initData currentUser=',currentUser);
       if(currentUser && currentUser.userType.indexOf("ADMIN") >= 0){
           //check if the user is admin  ; if yes, return all bookings
           CCompanies.find({
-            include:[
-                      {relation:'Clinics',scope:{include:[
-                                                            {relation:'BookingTypes'},
-                                                            {relation:'Doctors',scope:{include:'Person'}}
-                                                         ]}},
-                      {relation:'Doctors',scope:{include:[
-                                                            {relation:'Person',scope:{include:[
-                                                                                                {relation:'Avatar'},
-                                                                                                {relation:'Signature'}
-                                                                                              ]
-                                                                                      }
-                                                            },
-                                                            {relation:'Clinics'},
-                                                            {relation:'BookingTypes'},
-                                                            {relation:'Rosters',scope:{include:['BookingType','Clinic']}}
-                                                         ]}}
-                      ]
+            include: includes
           },function(err,data){
             companyData = data[0];
             cb(null,data);
@@ -35,23 +36,7 @@ module.exports = function(CCompanies) {
       }else if(currentUser && currentUser.userType.indexOf("COMPANY") >= 0){
           CCompanies.find( {
             where:{companyId:currentUser.companyId},
-            include:[
-                      {relation:'Clinics',scope:{include:[
-                                                            {relation:'BookingTypes'},
-                                                            {relation:'Doctors',scope:{include:'Person'}}
-                                                         ]}},
-                      {relation:'Doctors',scope:{include:[
-                                                            {relation:'Person',scope:{include:[
-                                                                                                {relation:'Avatar'},
-                                                                                                {relation:'Signature'}
-                                                                                              ]
-                                                                                      }
-                                                            },
-                                                            {relation:'Clinics'},
-                                                            {relation:'BookingTypes'},
-                                                            {relation:'Rosters',scope:{include:['BookingType','Clinic']}}
-                                                         ]}}
-                      ]
+            include:includes
           },function(err,data){
               companyData = data[0];
               cb(null,data);
@@ -111,6 +96,23 @@ module.exports = function(CCompanies) {
         accepts: [{arg: 'def', type: 'object', http: {source: 'body'}}],
         returns: {arg: 'rosters', type: 'array'},
         http: {path: '/generateRoster', verb: 'post'}
+      }
+  );
+
+  CCompanies.listRosters = function(doctor, cb) {
+    console.log('listRosters doctor.doctorId=',doctor);
+    CCompanies.app.models.RostersV.find({where:{doctorId:doctor.doctorId}},function(err,data){
+      //console.log('listRosters = ',err,data);
+      cb(err,data);
+    });
+  }
+
+  CCompanies.remoteMethod(
+      'listRosters',
+      {
+        accepts: [{arg: 'doctor', type: 'object', http: {source: 'body'}}],
+        returns: {arg: 'rosters', type: 'array'},
+        http: {path: '/listRosters', verb: 'post'}
       }
   );
 };

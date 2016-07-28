@@ -23,6 +23,7 @@
     "node-uuid": "^1.4.7",
     "q": "^1.4.1",
     "serve-favicon": "^2.0.1",
+    "strsplit": "^1.0.0",
     "tree-kit": "^0.5.26",
     "underscore": "^1.8.3"
   },
