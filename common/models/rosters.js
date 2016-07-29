@@ -1,6 +1,7 @@
 var moment = require('moment');
 var _ = require('underscore');
 var mySqlDate = require('../lib/mySqlDate');
+var compareTimeInString = require('../lib/compareTimeInString');
 
 module.exports = function(CRosters) {
 
@@ -37,8 +38,8 @@ module.exports = function(CRosters) {
               var pToDate = moment(def.toDate);
               var fromTime = def.fromTime;
               var toTime = def.toTime;
-              var fromTimeInNumber = timeStringToNumber(def.fromTime);
-              var toTimeInNumber = timeStringToNumber(def.toTime);
+              var fromTimeInNumber = def.fromTime;
+              var toTimeInNumber = def.toTime;
               var oldRosterIds = [];
               var calIds = [];
               var existingRosters = [];
@@ -57,8 +58,7 @@ module.exports = function(CRosters) {
                   var apptToTime2 = apptToTime.format("HH:mm");
                   console.log(' apptTime = ',apptFromTime2, '  - ', apptToTime2,'compare to fromTime =',fromTime,'toTime=',toTime);
 
-                  if((timeStringToNumber(apptFromTime2) <= fromTimeInNumber && fromTimeInNumber <= timeStringToNumber(apptToTime2) )||
-                      (timeStringToNumber(apptFromTime2) <= toTimeInNumber && toTimeInNumber <= timeStringToNumber(apptToTime2)   )){
+                  if(compareTimeInString(fromTimeInNumber,toTimeInNumber,apptFromTime2,apptToTime2)){
                       oldRosterIds.push(cal.rosterId);
                       //some roster is generated for the existing patient => the existing patient link to the deleted roster
                       //=> can not use rosterId to find the calendars => we need to keep forCalId to find all existing appts to re-create the roster
@@ -89,7 +89,7 @@ module.exports = function(CRosters) {
                             bookingTypeId : appt.bookingTypeId,
                             timeInterval : appt.duration,
                             fromDate: moment(appt.requireDate).add(appt.requireDate.getTimezoneOffset(),"m").format("YYYY-MM-DD HH:mm:ss"),
-                            toDate: moment(appt.requireDate).add(appt.requireDate.getTimezoneOffset(),"m").add(appt.duration,'m').format("YYYY-MM-DD HH:mm:ss"), 
+                            toDate: moment(appt.requireDate).add(appt.requireDate.getTimezoneOffset(),"m").add(appt.duration,'m').format("YYYY-MM-DD HH:mm:ss"),
                             forCalId: appt.calendarId
                           });
                         });
@@ -189,8 +189,24 @@ module.exports = function(CRosters) {
           roster.toDate = rosterDate.format('YYYY-MM-DD') + ' ' + toTime;
           roster.dayOfWeek = rosterDate.format('dd');
 
-          var willGenFromTime = moment(roster.fromDate,'YYYY-MM-DD HH:mm');
-          var willGenToTime = moment(roster.toDate,'YYYY-MM-DD HH:mm');
+          var willGenFromTime = timeStringToNumber(fromTime);
+          var willGenToTime = timeStringToNumber(toTime);
+
+          //checking the new roster whether covers the existing roster or not
+          //if cover the existing roster, => remove the existing roster and then
+          //update the caledar of the existing roster with the new roster id
+          existingRosters.map((eroster,index)=>{
+            //if the rosterDate of new roster == fromDate of existing roster => compare time to find out overlap or not
+            if(rosterDate.isSame(moment(eroster.fromDate,'YYYY-MM-DD'))){
+              var fromTimeInStr = (moment(eroster.fromDate,'YYYY-MM-DD HH:mm:ss').format('HH:mm'));
+              var toTimeInStr = (moment(eroster.toDate,'YYYY-MM-DD HH:mm:ss').format('HH:mm'));
+              if(compareTimeInString(fromTime,toTime,fromTimeInStr,toTimeInStr)){
+                  roster.forCalId = eroster.forCalId;
+                  existingRosters.splice(index,1);
+                  console.log('remove existingRosters from list ',existingRosters);
+              }
+            }
+          });
 
           rosters.push(roster);
 
@@ -248,4 +264,6 @@ module.exports = function(CRosters) {
       });
       //End gen roster
     };
+
+
 };
