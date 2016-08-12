@@ -28,6 +28,7 @@ module.exports = function(CCalendars) {
               ptoTime = fromTime.add((roster.timeInterval-1),'m').format('YYYY-MM-DD HH:mm');
               var calendar = {
                               calendarId : 0,
+                              companyId: roster.companyId,
                               rosterId : roster.rosterId,
                               doctorId : roster.doctorId,
                               clinicId : roster.workingSiteId,
@@ -56,6 +57,7 @@ module.exports = function(CCalendars) {
               if(!compareTimeInString(pfromTimeInSrt,ptoTimeInSrt,eapptFromTime2,eapptToTime2)){
                 var calendar = {
                                 calendarId : 0,
+                                companyId: roster.companyId,
                                 rosterId : roster.rosterId,
                                 doctorId : roster.doctorId,
                                 clinicId : roster.workingSiteId,

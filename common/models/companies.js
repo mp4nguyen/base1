@@ -22,7 +22,7 @@ module.exports = function(CCompanies) {
                                                       {relation:'BookingTypes'}
                                                    ]}}
                 ];
-//{relation:'RostersV'}            
+//{relation:'RostersV'}
       console.log('CCompanies.initData currentUser=',currentUser);
       if(currentUser && currentUser.userType.indexOf("ADMIN") >= 0){
           //check if the user is admin  ; if yes, return all bookings
@@ -115,4 +115,82 @@ module.exports = function(CCompanies) {
         http: {path: '/listRosters', verb: 'post'}
       }
   );
+
+  CCompanies.listBookingTypes = function(criteria, cb) {
+    var currentUser = loopback.getCurrentContext().active.currentUser;
+    console.log('listBookingTypes criteria = ',criteria);
+    console.log('listBookingTypes currentUser = ',currentUser);
+    if(currentUser || true){
+      CCompanies.app.models.CBookingTypes.find({where:{isenable:1}},(err,data) => {
+        cb(err,data);
+      });
+    }else{
+      cb("Please log in",null);
+    }
+
+  }
+
+  CCompanies.remoteMethod(
+      'listBookingTypes',
+      {
+        accepts: [{arg: 'criteria', type: 'object', http: {source: 'body'}}],
+        returns: {arg: 'bookingTypes', type: 'array'},
+        http: {path: '/listBookingTypes', verb: 'post'}
+      }
+  );
+
+  CCompanies.listBookings = function(criteria, cb) {
+    var currentUser = loopback.getCurrentContext().active.currentUser;
+    console.log('listBookings criteria = ',criteria);
+    console.log('listBookings currentUser = ',currentUser);
+    if(currentUser){
+      CCompanies.app.models.BookingsV.find({where:{companyId:currentUser.companyId}},(err,data) => {
+        //console.log('listRosters = ',err,data);
+        cb(err,data);
+      });
+    }else{
+      cb("Please log in",null);
+    }
+
+  }
+
+  CCompanies.remoteMethod(
+      'listBookings',
+      {
+        accepts: [{arg: 'criteria', type: 'object', http: {source: 'body'}}],
+        returns: {arg: 'bookings', type: 'array'},
+        http: {path: '/listBookings', verb: 'post'}
+      }
+  );
+
+  CCompanies.listDoctors = function(criteria, cb) {
+    var currentUser = loopback.getCurrentContext().active.currentUser;
+    console.log('listDoctors criteria = ',criteria);
+    console.log('listDoctors currentUser = ',currentUser);
+    //currentUser.companyId
+    if(currentUser || true){
+      CCompanies.app.models.DoctorsV.find({where:{companyId:1},include:[
+                                                                          {relation:'rosters',scope:{include:[
+                                                                                                                {relation:'events'}
+                                                                                                              ]}
+                                                                          }
+                                                                       ]},(err,data) => {
+        //console.log('listRosters = ',err,data);
+        cb(err,data);
+      });
+    }else{
+      cb("Please log in",null);
+    }
+
+  }
+
+  CCompanies.remoteMethod(
+      'listDoctors',
+      {
+        accepts: [{arg: 'criteria', type: 'object', http: {source: 'body'}}],
+        returns: {arg: 'doctors', type: 'array'},
+        http: {path: '/listDoctors', verb: 'post'}
+      }
+  );
+
 };

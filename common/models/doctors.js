@@ -1,6 +1,7 @@
 var formidable = require("formidable");
 var CONTAINERS_URL = '/api/Containers/';
 var saveFile = require('../lib/saveFile');
+var loopback = require('loopback');
 
 module.exports = function(CDoctors) {
 
@@ -160,4 +161,35 @@ module.exports = function(CDoctors) {
 
     });
   }
+
+  CDoctors.addBookingType = function(criteria, cb) {
+    var currentUser = loopback.getCurrentContext().active.currentUser;
+    console.log('listBookingTypes criteria = ',criteria);
+    console.log('listBookingTypes currentUser = ',currentUser);
+    if(currentUser || true){
+      let newDoctorBookingType = {
+        "doctorId": criteria.doctorId,
+        "bookingTypeId": criteria.bookingTypeId,
+        "isenable": criteria.isenable,
+      };
+
+      CDoctors.app.models.CDoctorBookingTypes.create(newDoctorBookingType,(err,data)=>{
+        cb(err,data);
+      });
+
+    }else{
+      cb("Please log in",null);
+    }
+
+  }
+
+  CDoctors.remoteMethod(
+      'addBookingType',
+      {
+        accepts: [{arg: 'criteria', type: 'object', http: {source: 'body'}}],
+        returns: {arg: 'bookingType', type: 'array'},
+        http: {path: '/addBookingType', verb: 'post'}
+      }
+  );
+
 };
