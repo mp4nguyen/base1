@@ -164,18 +164,19 @@ module.exports = function(CDoctors) {
 
   CDoctors.addBookingType = function(criteria, cb) {
     var currentUser = loopback.getCurrentContext().active.currentUser;
-    console.log('listBookingTypes criteria = ',criteria);
-    console.log('listBookingTypes currentUser = ',currentUser);
+    console.log('addBookingType criteria = ',criteria);
+    console.log('addBookingType currentUser = ',currentUser);
     if(currentUser || true){
+
       let newDoctorBookingType = {
         "doctorId": criteria.doctorId,
         "bookingTypeId": criteria.bookingTypeId,
-        "isenable": criteria.isenable,
+        "isenable": 1
       };
 
       CDoctors.app.models.CDoctorBookingTypes.create(newDoctorBookingType,(err,data)=>{
-        cb(err,data);
-      });
+              cb(err,data);
+            });
 
     }else{
       cb("Please log in",null);
@@ -189,6 +190,99 @@ module.exports = function(CDoctors) {
         accepts: [{arg: 'criteria', type: 'object', http: {source: 'body'}}],
         returns: {arg: 'bookingType', type: 'array'},
         http: {path: '/addBookingType', verb: 'post'}
+      }
+  );
+
+  CDoctors.removeBookingType = function(criteria, cb) {
+    var currentUser = loopback.getCurrentContext().active.currentUser;
+    console.log('removeBookingType criteria = ',criteria);
+    console.log('removeBookingType currentUser = ',currentUser);
+    if(currentUser || true){
+
+      let removeDoctorBookingType = {
+        "doctorId": criteria.doctorId,
+        "bookingTypeId": criteria.bookingTypeId
+      };
+
+      CDoctors.app.models.CDoctorBookingTypes.destroyAll(removeDoctorBookingType,(err,data)=>{
+          console.log('removeDoctorBookingType = ',err,data);
+          cb(err,data);
+      });
+
+    }else{
+      cb("Please log in",null);
+    }
+
+  }
+
+  CDoctors.remoteMethod(
+      'removeBookingType',
+      {
+        accepts: [{arg: 'criteria', type: 'object', http: {source: 'body'}}],
+        returns: {arg: 'bookingType', type: 'array'},
+        http: {path: '/removeBookingType', verb: 'post'}
+      }
+  );
+
+  CDoctors.addClinic = function(criteria, cb) {
+    var currentUser = loopback.getCurrentContext().active.currentUser;
+    console.log('addClinic criteria = ',criteria);
+    console.log('addClinic currentUser = ',currentUser);
+    if(currentUser || true){
+
+      let newClinic = {
+        "doctorId": criteria.doctorId,
+        "clinicId": criteria.clinicId,
+        "isenable": 1
+      };
+
+      CDoctors.app.models.CDoctorClinics.create(newClinic,(err,data)=>{
+              cb(err,data);
+            });
+
+    }else{
+      cb("Please log in",null);
+    }
+
+  }
+
+  CDoctors.remoteMethod(
+      'addClinic',
+      {
+        accepts: [{arg: 'criteria', type: 'object', http: {source: 'body'}}],
+        returns: {arg: 'clinic', type: 'array'},
+        http: {path: '/addClinic', verb: 'post'}
+      }
+  );
+
+  CDoctors.removeClinic = function(criteria, cb) {
+    var currentUser = loopback.getCurrentContext().active.currentUser;
+    console.log('removeClinic criteria = ',criteria);
+    console.log('removeClinic currentUser = ',currentUser);
+    if(currentUser || true){
+
+      let removeClinic = {
+        "doctorId": criteria.doctorId,
+        "clinicId": criteria.clinicId
+      };
+
+      CDoctors.app.models.CDoctorClinics.destroyAll(removeClinic,(err,data)=>{
+          console.log('removeClinic = ',err,data);
+          cb(err,data);
+      });
+
+    }else{
+      cb("Please log in",null);
+    }
+
+  }
+
+  CDoctors.remoteMethod(
+      'removeClinic',
+      {
+        accepts: [{arg: 'criteria', type: 'object', http: {source: 'body'}}],
+        returns: {arg: 'clinic', type: 'array'},
+        http: {path: '/removeClinic', verb: 'post'}
       }
   );
 

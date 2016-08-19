@@ -193,4 +193,114 @@ module.exports = function(CCompanies) {
       }
   );
 
+  CCompanies.listPatients = function(criteria, cb) {
+    var currentUser = loopback.getCurrentContext().active.currentUser;
+    console.log('listPatients criteria = ',criteria);
+    console.log('listPatients currentUser = ',currentUser);
+    if(!currentUser) currentUser = {};
+    currentUser.companyId = 1;//temporary setting for development
+    if(currentUser || true){
+      var whereObject = {medicalCompanyId:currentUser.companyId};
+      if(criteria && criteria.firstName){
+        whereObject.firstName = {like:'%'+criteria.firstName+'%'}
+      }
+      if(criteria && criteria.lastName){
+        whereObject.lastName = {like:'%'+criteria.lastName+'%'}
+      }
+      if(criteria && criteria.gender){
+        whereObject.gender = {like:'%'+criteria.gender+'%'}
+      }
+      if(criteria && criteria.phone){
+        whereObject.phone = {like:'%'+criteria.phone+'%'}
+      }
+      if(criteria && criteria.mobile){
+        whereObject.mobile = {like:'%'+criteria.mobile+'%'}
+      }
+      if(criteria && criteria.email){
+        whereObject.email = {like:'%'+criteria.email+'%'}
+      }
+      console.log('will filter with criteria = ',whereObject);
+      CCompanies.app.models.PatientsV.find({where:whereObject},(err,data) => {
+        console.log('listPatients = ',err,data);
+        cb(err,data);
+      });
+    }else{
+      cb("Please log in",null);
+    }
+
+  }
+
+  CCompanies.remoteMethod(
+      'listPatients',
+      {
+        accepts: [{arg: 'criteria', type: 'object', http: {source: 'body'}}],
+        returns: {arg: 'patients', type: 'array'},
+        http: {path: '/listPatients', verb: 'post'}
+      }
+  );
+
+  CCompanies.createPatient = function(criteria, cb) {
+    var currentUser = loopback.getCurrentContext().active.currentUser;
+    console.log('createPatient criteria = ',criteria);
+    console.log('createPatient currentUser = ',currentUser);
+    if(!currentUser) currentUser = {};
+    currentUser.companyId = 1;//temporary setting for development
+    if(currentUser || true){
+      let person = {
+        "personId": 0,
+        "isenable": 1,
+        "title": criteria.title,
+        "firstName": criteria.firstName,
+        "lastName": criteria.lastName,
+        "dob": criteria.dob,
+        "gender": criteria.gender,
+        "phone": criteria.phone,
+        "mobile": criteria.mobile,
+        "email": criteria.email,
+        "occupation": "",
+        "address": criteria.address,
+        "suburbDistrict": criteria.suburbDistrict,
+        "ward": criteria.ward,
+        "postcode": "",
+        "stateProvince": criteria.stateProvince,
+        "country": criteria.country,
+        "ispatient": 1,
+        "isdoctor": 0,
+        "avatarId": null,
+        "signatureId": null,
+        "sourceId": null
+      };
+
+      CCompanies.app.models.People.create(person,(err,per) => {
+        console.log('createPatient.createPerson = ',err,per);
+        if(err) cb(err,null);
+        let patient = {
+                          "patientId": 0,
+                          "medicalCompanyId": currentUser.companyId,
+                          "userId": null,
+                          "personId": per.personId,
+                          "isenable": 1
+                        };
+        CCompanies.app.models.Patients.create(patient,(err,pat)=>{
+          console.log('createPatient.createPatient = ',err,pat);
+
+          if(err) cb(err,null);
+          let returnObject = Object.assign({},per.toJSON(),pat.toJSON());
+          cb(err,returnObject);
+        });
+      });
+    }else{
+      cb("Please log in",null);
+    }
+  }
+
+  CCompanies.remoteMethod(
+      'createPatient',
+      {
+        accepts: [{arg: 'criteria', type: 'object', http: {source: 'body'}}],
+        returns: {arg: 'patient', type: 'array'},
+        http: {path: '/createPatient', verb: 'post'}
+      }
+  );
+
 };
