@@ -303,4 +303,59 @@ module.exports = function(CCompanies) {
       }
   );
 
+  CCompanies.makeAppointment = function(criteria, cb) {
+    var currentUser = loopback.getCurrentContext().active.currentUser;
+    console.log('createPatient criteria = ',criteria);
+    console.log('createPatient currentUser = ',currentUser);
+    if(!currentUser) currentUser = {};
+    currentUser.companyId = 1;//temporary setting for development
+    if(currentUser || true){
+      CCompanies.app.models.CCalendars.find({where:{doctorId:criteria.resourceId,fromTime:{between:[criteria.fromTime,criteria.toTime]}}},(err,cals)=>{
+        console.log("error = ",err,cals);
+        var patientAppts = [];
+        cals.forEach(cal=>{
+          var patientAppt = {
+            "apptId": 0,
+            "patientId": criteria.patientId,
+            "calendarId": cal.calendarId,
+            "patientPersonId": criteria.personId,
+            "duration": 0,
+            "requireDate": cal.fromTime,
+            "fromTime": cal.fromTime,
+            "toTime": cal.toTime,
+            "description": "",
+            "apptType": "string",
+            "apptStatus": "Confirmed",
+            "apptDate": cal.fromTime,
+            "bookingTypeId": cal.bookingTypeId,
+            "clinicId": cal.clinicId,
+            "doctorId": cal.doctorId,
+            "rosterId": cal.rosterId,
+            "personId": -1,
+            "sourceId": -1
+          };
+          patientAppts.push(patientAppt);
+        });
+
+
+        CCompanies.app.models.PatientAppointments.create(patientAppts,(err,rs)=>{
+          console.log('created PatientAppointments err=',err,rs);
+          cb(err,rs);
+        });
+
+      });
+    }else{
+      cb("Please log in",null);
+    }
+  }
+
+  CCompanies.remoteMethod(
+      'makeAppointment',
+      {
+        accepts: [{arg: 'criteria', type: 'object', http: {source: 'body'}}],
+        returns: {arg: 'appointment', type: 'object'},
+        http: {path: '/makeAppointment', verb: 'post'}
+      }
+  );
+
 };
